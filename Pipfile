@@ -1,0 +1,3 @@
+[packages]
+python-telegram-bot = "*"
+aftership = "*"
