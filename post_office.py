@@ -2,6 +2,7 @@ from os import environ
 from time import sleep
 from datetime import datetime
 import aftership
+from logger import log
 
 aftership_token = environ['AFTERSHIP_TOKEN']
 post = 'russian-post'
@@ -27,22 +28,25 @@ delivery_time_str = {
 }
 
 def command_pkg(bot, update):
-    words = update.message.text.split()
+    log.info(update)
+
+    message = update.message
+    words = message.text.split()
 
     if len(words) != 2:
-        update.message.reply_text("Надо указать трек-номер")
+        message.reply_text("Надо указать трек-номер")
         return
 
     track_num = words[1]
     if len(track_num) != 13:
-        update.message.reply_text("Трек-номер должен состоять из 13 символов")
+        message.reply_text("Трек-номер должен состоять из 13 символов")
         return
 
     try:
         trk = tracking.get(post, track_num)
     except:
         # Create if not found and try again
-        update.message.reply_text("Пойду поищу в отделении...")
+        message.reply_text("Пойду поищу в отделении...")
         tracking.post(tracking=dict(slug=post, tracking_number=track_num, title="Test"))
         sleep(10)
         trk = tracking.get(post, track_num)
@@ -85,8 +89,6 @@ def command_pkg(bot, update):
         except:
             pass
 
-    update.message.reply_text(reply)
+    message.reply_text(reply)
 
-#
-global tracking
 tracking = aftership.APIv4(aftership_token).trackings

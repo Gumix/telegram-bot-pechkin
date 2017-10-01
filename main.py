@@ -1,8 +1,8 @@
 #!/usr/bin/env python
 
-import logging
 from os import environ
 from telegram.ext import Updater, CommandHandler
+from logger import log
 from post_office import command_pkg
 
 telegram_token = environ['TELEGRAM_TOKEN']
@@ -16,12 +16,10 @@ def command_help(bot, update):
     update.message.reply_text(reply)
 
 def error(bot, update, error):
-    logging.getLogger().warn('Update "%s" caused error "%s"' % (update, error))
+    log.info(update)
+    log.warn('Update "%s" caused error "%s"' % (update, error))
 
 def main():
-    logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-                        level=logging.INFO)
-
     updater = Updater(telegram_token)
     dispatcher = updater.dispatcher
 
